@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+Agent/Transformers Agent/configs.py
+Function Calling/OpenAI function calling/configs.py
