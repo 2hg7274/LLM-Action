@@ -9,7 +9,7 @@ from transformers import(
     ReactJsonAgent
 )
 from custom_prompt import DEFAULT_REACT_JSON_SYSTEM_PROMPT
-from tools import WeatherTool, WebSearchTool
+from tools import WebSearchTool, TopProcessesByMemoryTool, ProcessKillerTool
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 warnings.filterwarnings(action='ignore')
@@ -38,8 +38,9 @@ def make_pipeline(path):
 
 def make_tools():
     web_search_tool = WebSearchTool()
-    weather_tool = WeatherTool()
-    return [web_search_tool, weather_tool]
+    execute_tool = TopProcessesByMemoryTool()
+    process_killer_tool = ProcessKillerTool()
+    return [web_search_tool, execute_tool, process_killer_tool]
 
 def make_agent(pipe, system_prompt):
     llm_engine = TransformersEngine(pipeline=pipe)
