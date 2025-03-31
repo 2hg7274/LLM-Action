@@ -175,4 +175,5 @@ cython_debug/
 
 
 Agent/Transformers Agent/configs.py
+Agent/Transformers Agent/kakao_code.json
 Function Calling/OpenAI function calling/configs.py
