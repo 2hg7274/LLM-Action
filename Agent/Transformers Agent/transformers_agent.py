@@ -9,7 +9,7 @@ from transformers import(
     ReactJsonAgent
 )
 from custom_prompt import DEFAULT_REACT_JSON_SYSTEM_PROMPT
-from tools import WebSearchTool, TopProcessesByMemoryTool, ProcessKillerTool
+from tools import WebSearchTool, TopProcessesByMemoryTool, ProcessKillerTool, KakaoMessageTool
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 warnings.filterwarnings(action='ignore')
@@ -40,7 +40,8 @@ def make_tools():
     web_search_tool = WebSearchTool()
     execute_tool = TopProcessesByMemoryTool()
     process_killer_tool = ProcessKillerTool()
-    return [web_search_tool, execute_tool, process_killer_tool]
+    message_tool = KakaoMessageTool()
+    return [web_search_tool, execute_tool, process_killer_tool, message_tool]
 
 def make_agent(pipe, system_prompt):
     llm_engine = TransformersEngine(pipeline=pipe)
@@ -85,7 +86,7 @@ if __name__=="__main__":
     user_input = input("USER: ")
     new_chat = True
     while user_input != "END":
-        chat_list = main(user_input, chat_list, agent, new_chat)
+        chat_list = main(str(user_input), chat_list, agent, new_chat)
         print("ASSISTANT:")
         assistant_content = chat_list[-1]["content"]
         for char in assistant_content:

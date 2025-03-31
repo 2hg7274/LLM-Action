@@ -2,6 +2,7 @@ import os
 import psutil
 import json
 import requests
+import json
 from tavily import TavilyClient
 from transformers.agents.tools import Tool
 from configs import TAVILY_API, OPENWEATHER_API
@@ -74,16 +75,18 @@ class TopProcessesByMemoryTool(Tool):
         processes = sorted(processes, key=lambda proc: proc.get('memory_percent', 0), reverse=True)
         top_processes = processes[:10]
 
-        # Return the top 30 processes in a pretty-printed JSON format.
+        # Return the top 10 processes in a pretty-printed JSON format.
         return json.dumps(top_processes, indent=2)
     
+
 
 
 class ProcessKillerTool(Tool):
     name = "process-killer"
     description = """This tool terminates a Linux program given its process ID (PID).
     It uses psutil to locate the process and sends a termination signal.
-    If the process does not exit gracefully, it forcefully kills the process."""
+    If the process does not exit gracefully, it forcefully kills the process.
+    Note: It will never terminate the currently running process."""
     inputs = {"pid": {"type": "integer", "description": "The process ID (PID) of the Linux program to terminate."}}
     output_type = "any"
 
@@ -119,3 +122,45 @@ class ProcessKillerTool(Tool):
             return f"An error occurred while terminating the process: {str(e)}"
 
         return f"Process with PID {pid} has been terminated successfully."
+
+    
+
+class KakaoMessageTool(Tool):
+    name = "kakao_message"
+    description = """This tool sends a default text message using the KakaoTalk API. 
+    It is designed to automatically execute after the ProcessKillerTool has been run, sending a notification that includes details about the action taken (such as process termination information). 
+    The tool reads the access token from a JSON file, constructs a message template with the provided text (which should describe the executed actions) and an optional link, and sends the message to notify about the process termination.
+    Ensure that the JSON file contains the 'access_token' key and is located at the specified path."""
+    inputs = {
+        "message": {"type": "string", "description": "The text message containing the details of the executed action (e.g., process termination) to be sent via KakaoTalk."},
+        "link": {"type": "string", "description": "The web URL to be attached to the message. Default is 'www.naver.com'."}
+    }
+    output_type = "any"
+
+    def forward(self, *args, **kwargs):
+        message = kwargs.get("message")
+        link = kwargs.get("link", "www.naver.com")
+        if not message:
+            if args:
+                message = args[0]
+            else:
+                raise ValueError("The 'message' input is required.")
+        # Load the access token from the JSON file
+        with open("./kakao_code.json", "r") as fp:
+            tokens = json.load(fp)
+        
+        url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+        headers = {
+            "Authorization": "Bearer " + tokens["access_token"]
+        }
+        data = {
+            "template_object": json.dumps({
+                "object_type": "text",
+                "text": message,
+                "link": {
+                    "web_url": link
+                }
+            })
+        }
+        response = requests.post(url, headers=headers, data=data)
+        return response.json()
