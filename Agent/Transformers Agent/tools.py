@@ -57,8 +57,9 @@ class WebSearchTool(Tool):
 
 class TopProcessesByMemoryTool(Tool):
     name = "top-processes-by-memory"
-    description = """This tool retrieves the top 10 running processes sorted in descending order by their memory usage percentage.
-    It uses psutil to gather process information and returns the results in JSON format."""
+    description = """This tool allows real-time retrieval of the top 10 running processes sorted in descending order by memory usage percentage.
+    It uses psutil to collect process information and returns the results in JSON format."""
+
     inputs = {}  # No inputs are required for this tool.
     output_type = "any"
 
@@ -86,7 +87,10 @@ class ProcessKillerTool(Tool):
     description = """This tool terminates a Linux program given its process ID (PID).
     It uses psutil to locate the process and sends a termination signal.
     If the process does not exit gracefully, it forcefully kills the process.
-    Note: It will never terminate the currently running process."""
+    [Note]
+    - It will never terminate the currently running process. 
+    - This tool is intended to terminate Python processes only."""
+
     inputs = {"pid": {"type": "integer", "description": "The process ID (PID) of the Linux program to terminate."}}
     output_type = "any"
 

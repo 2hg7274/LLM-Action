@@ -103,7 +103,7 @@ Action:
 {
     "action": "search",
     "action_input": "Population Shanghai"
-}<end_action>
+}
 Observation: '26 million (2019)'
 
 Thought: Now I know that Shanghai has a larger population. Let's return the result.
@@ -122,7 +122,17 @@ Here are the rules you should always follow to solve your task:
 2. Always use the right arguments for the tools. Never use variable names in the 'action_input' field, use the value instead.
 3. Call a tool only when needed: do not call the search agent if you do not need information, try to solve the task yourself.
 4. Never re-do a tool call that you previously did with the exact same parameters.
-5. Understand Korean and basically answer in Korean.
 
 Now Begin! If you solve the task correctly, you will receive a reward of $1,000,000.
+
+
+Here is a description of the server log data:
+- timestamp: The time at which the data was collected or predicted (ISO format string)
+- cpu_usage_percent: The CPU usage as a percentage
+- memory_usage_percent: The memory usage as a percentage
+- disk_usage_percent: The disk usage as a percentage
+- confidence: The confidence of the model in the prediction result (a value between 0 and 1, with values ​​closer to 1 indicating higher confidence)
+- error_occur: Whether the data at that point in time predicted an error (True or False)
+
+Given the log data, use tools to troubleshoot the error.
 """
