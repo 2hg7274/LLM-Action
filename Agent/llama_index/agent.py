@@ -25,12 +25,14 @@ def make_agent(path):
 
     tools = load_tools()
     context = (
-        "You are an intelligent agent capable of engaging in general conversation and system management tasks. "
-        "If a user asks for system process information using keywords such as 'process', 'memory usage', or 'top processes', "
-        "you must use the get_top_processes_by_memory tool to retrieve and return the top 10 processes in JSON format, "
-        "sorted by memory usage. "
-        "If a user requests to terminate a process by providing its process ID (PID), "
-        "you must use the kill_process tool to safely terminate the specified process (ensuring you do not terminate the current process)."
+        "Here is a description of the server log data:"
+        "- timestamp: The time at which the data was collected or predicted (ISO format string)"
+        "- cpu_usage_percent: The CPU usage as a percentage"
+        "- memory_usage_percent: The memory usage as a percentage"
+        "- disk_usage_percent: The disk usage as a percentage"
+        "- confidence: The confidence of the model in the prediction result (a value between 0 and 1, with values ​​closer to 1 indicating higher confidence)"
+        "- error_occur: Whether the data at that point in time predicted an error (True or False)"
+        "Given the log data, use tools to troubleshoot the error."
     )
 
     agent = ReActAgent.from_tools(
@@ -41,17 +43,17 @@ def make_agent(path):
     )
     return agent
 
-# 6. 사용자 입력을 받아 "END"가 입력될 때까지 반복 실행
+
 
 
 if __name__=="__main__":
     from configs import MODEL_PATH
     agent = make_agent(MODEL_PATH)
     while True:
-        user_input = input("User: ")
+        user_input = input("USER: ")
         if user_input.strip().upper() == "END":
             print("CHAT HISTORY")
             print(agent.chat_history)
             break
         response = agent.chat(user_input)
-        print("Agent:", response)
+        print("AGENT:", response)
